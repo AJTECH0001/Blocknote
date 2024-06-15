@@ -27,6 +27,8 @@ export default function App() {
   // Stores the editor's contents as Markdown.
   const [markdown, setMarkdown] = useState<string>("");
 
+   
+
   // Creates a new editor instance with some initial content.
   const editor = useCreateBlockNote({
     initialContent: [
@@ -43,10 +45,7 @@ export default function App() {
           },
         ],
       },
-      {
-        type: "paragraph",
-        content: "Welcome to this demo!",
-      },
+    
       {
         type: "paragraph",
         content: "Upload an image using the button below",
@@ -66,6 +65,7 @@ export default function App() {
     // Converts the editor's contents from Block objects to Markdown and store to state.
     const markdown = await editor.blocksToMarkdownLossy(editor.document);
     setMarkdown(markdown);
+    localStorage.setItem("editorContent", markdown);
   };
 
   // Renders the editor instance, and its contents as Markdown below.
