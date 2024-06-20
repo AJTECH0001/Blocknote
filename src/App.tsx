@@ -28,6 +28,7 @@ async function uploadFile(file: File) {
 export default function App() {
   // Stores the editor's contents as Markdown.
   const [markdown, setMarkdown] = useState<string>("");
+  const [mode, setMode] = useState<string>("normal");
 
   // Creates a new editor instance with some initial content.
   const editor = useCreateBlockNote({
@@ -35,10 +36,10 @@ export default function App() {
       {
         type: "paragraph",
         content: [
-          " ",
+          "Hello, ",
           {
             type: "text",
-            text: "",
+            text: "world!",
             styles: {
               bold: true,
             },
@@ -47,7 +48,7 @@ export default function App() {
       },
       {
         type: "paragraph",
-        content: "",
+        content: "Upload an image using the button below",
       },
       {
         type: "image",
@@ -67,11 +68,16 @@ export default function App() {
   };
 
   const renderMarkdown = (markdown: string) => {
-    // Parse the Markdown content to HTML
-    const rawHTML = marked(markdown);
-    // Sanitize the HTML
-    const cleanHTML = DOMPurify.sanitize(rawHTML);
-    return cleanHTML;
+    if (mode === "code") {
+      // Wrap the entire content in a code block
+      return `<pre><code>${DOMPurify.sanitize(markdown)}</code></pre>`;
+    } else {
+      // Parse the Markdown content to HTML
+      const rawHTML = marked(markdown);
+      // Sanitize the HTML
+      const cleanHTML = DOMPurify.sanitize(rawHTML);
+      return cleanHTML;
+    }
   };
 
   useEffect(() => {
@@ -87,6 +93,10 @@ export default function App() {
       <div>Input (BlockNote Editor):</div>
       <div className={"item"}>
         <BlockNoteView editor={editor} onChange={onChange} />
+      </div>
+      <div>
+        <button onClick={() => setMode("normal")}>Normal</button>
+        <button onClick={() => setMode("code")}>Code</button>
       </div>
       <div>Output (Markdown):</div>
       <div className={"item bordered"}>
