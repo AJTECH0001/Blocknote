@@ -2,7 +2,11 @@ import "@blocknote/core/fonts/inter.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import hljs from "highlight.js";
+import "highlight.js/styles/default.css";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 import "./styles.css";
 
@@ -22,12 +26,8 @@ async function uploadFile(file: File) {
 }
 
 export default function App() {
-
-  
   // Stores the editor's contents as Markdown.
   const [markdown, setMarkdown] = useState<string>("");
-
-   
 
   // Creates a new editor instance with some initial content.
   const editor = useCreateBlockNote({
@@ -35,20 +35,19 @@ export default function App() {
       {
         type: "paragraph",
         content: [
-          "Hello, ",
+          " ",
           {
             type: "text",
-            text: "world!",
+            text: "",
             styles: {
               bold: true,
             },
           },
         ],
       },
-    
       {
         type: "paragraph",
-        content: "Upload an image using the button below",
+        content: "",
       },
       {
         type: "image",
@@ -58,7 +57,6 @@ export default function App() {
       },
     ],
     uploadFile,
-    
   });
 
   const onChange = async () => {
@@ -67,6 +65,21 @@ export default function App() {
     setMarkdown(markdown);
     localStorage.setItem("editorContent", markdown);
   };
+
+  const renderMarkdown = (markdown: string) => {
+    // Parse the Markdown content to HTML
+    const rawHTML = marked(markdown);
+    // Sanitize the HTML
+    const cleanHTML = DOMPurify.sanitize(rawHTML);
+    return cleanHTML;
+  };
+
+  useEffect(() => {
+    // Apply syntax highlighting after rendering the HTML
+    document.querySelectorAll("pre code").forEach((block) => {
+      hljs.highlightBlock(block as HTMLElement);
+    });
+  });
 
   // Renders the editor instance, and its contents as Markdown below.
   return (
@@ -77,9 +90,7 @@ export default function App() {
       </div>
       <div>Output (Markdown):</div>
       <div className={"item bordered"}>
-        <pre>
-          <code>{markdown}</code>
-        </pre>
+        <div dangerouslySetInnerHTML={{ __html: renderMarkdown(markdown) }} />
       </div>
     </div>
   );

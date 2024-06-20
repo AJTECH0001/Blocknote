@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@blocknote/ariakit": "latest",
-    "@blocknote/core": "latest",
-    "@blocknote/mantine": "latest",
-    "@blocknote/react": "latest",
+    "@blocknote/core": "^0.14.1",
+    "@blocknote/mantine": "^0.14.1",
+    "@blocknote/react": "^0.14.1",
     "@blocknote/shadcn": "latest",
+    "dompurify": "^3.1.5",
+    "highlight.js": "^11.9.0",
+    "marked": "^13.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
